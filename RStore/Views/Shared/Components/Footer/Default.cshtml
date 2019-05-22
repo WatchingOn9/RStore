@@ -1,0 +1,60 @@
+﻿@model FooterViewModel
+
+@{ 
+    var year = DateTime.Now.ToString("yyyy");
+    var logo = string.IsNullOrEmpty(Model.Setting.AdminLogo) ? "logo-small.png" : Model.Setting.AdminLogo;
+}
+
+<div class="footer-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-3">
+                    <h3>ABOUT US</h3>
+                    <div class="footer-logo"><img src="~/images/@logo" alt="" class="img-thumbnail" width="180" /></div>
+                    <p>@Model.Setting.MetaDescription ... <a asp-controller="Page" asp-action="Index" asp-route-Id="2">Read More</a></p>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="fb-page" data-adapt-container-width="true" data-height="280" data-hide-cover="false"
+                         data-href="@Model.Setting.FacebookPageUrl" data-show-facepile="true"
+                         data-small-header="false" data-tabs="timeline" data-width="350">
+                        <blockquote cite="@Model.Setting.FacebookPageUrl" class="fb-xfbml-parse-ignore">
+                            <a href="@Model.Setting.FacebookPageUrl">@Model.Setting.CompanyName</a>
+                        </blockquote>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                    <h3>CATEGORIES</h3>
+                    <ul class="footer-category">
+                        @foreach (var cat in Model.Categories) {
+                            <li><a asp-controller="Page" asp-action="Index" 
+                                    asp-route-Id="3" asp-route-category="@cat.CategoryName">@Html.Raw(cat.CategoryName)</a></li>
+                        }
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <h3>Contact Us</h3>
+                    @if (!string.IsNullOrEmpty(Model.Setting.Address1)) {
+                        <div class="address mb-1">
+                            @Model.Setting.CompanyName <br />
+                            @Model.Setting.Address1 <br />
+                            @Model.Setting.Address2 <br />
+                            @Model.Setting.Address3
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Setting.PhoneNo)) {
+                        <div class="phone mb-1">@Model.Setting.PhoneNo</div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Setting.FaxNo)) {
+                        <div class="fax mb-1">@Model.Setting.FaxNo</div>
+                    }
+
+                </div>
+
+
+            </div>
+            <div class="copyright">Copyright &copy; @year @Model.Setting.CompanyName - All Rights Reserved.</div>
+        </div>
+    </div>

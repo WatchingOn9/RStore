@@ -1,0 +1,434 @@
+﻿@model OrderEditViewModel
+
+@{
+    Layout = "_AdminLayout";
+}
+<form asp-action="ViewDetail" method="post">
+    <input type="hidden" asp-for="Order.OrderID" />
+    <div class="row mb-2">
+        <div class="col-sm-9">
+            <h4>Quotation No:&nbsp;&nbsp;
+            <input asp-for="Order.QuotationNo" class="form-control d-inline" value="@("Q " + Model.Order.OrderID.ToString().PadLeft(6, '0'))" required style="width: auto" />
+            </h4>
+        </div>
+        <div class="col-sm-3 text-right">
+            Currency: &nbsp;
+            <input asp-for="Order.Currency" class="form-control d-inline" list="currency" value="@Model.Order.Currency" required style="width: auto" />
+            <datalist id="currency">
+                <option value="" selected>Select Currency</option>
+                <option value="AUD">Australian Dollar</option>
+                <option value="BRL">Brazilian Real </option>
+                <option value="CAD">Canadian Dollar</option>
+                <option value="CZK">Czech Koruna</option>
+                <option value="DKK">Danish Krone</option>
+                <option value="EUR">Euro</option>
+                <option value="HKD">Hong Kong Dollar</option>
+                <option value="HUF">Hungarian Forint </option>
+                <option value="ILS">Israeli New Sheqel</option>
+                <option value="JPY">Japanese Yen</option>
+                <option value="MYR">Malaysian Ringgit</option>
+                <option value="MXN">Mexican Peso</option>
+                <option value="NOK">Norwegian Krone</option>
+                <option value="NZD">New Zealand Dollar</option>
+                <option value="PHP">Philippine Peso</option>
+                <option value="PLN">Polish Zloty</option>
+                <option value="GBP">Pound Sterling</option>
+                <option value="SGD">Singapore Dollar</option>
+                <option value="SEK">Swedish Krona</option>
+                <option value="CHF">Swiss Franc</option>
+                <option value="TWD">Taiwan New Dollar</option>
+                <option value="THB">Thai Baht</option>
+                <option value="TRY">Turkish Lira</option>
+                <option value="USD">U.S. Dollar</option>
+            </datalist>
+        </div>
+    </div>
+
+    @if (TempData["error"] != null) {
+        <div class="alert alert-danger">
+            @TempData["error"]<br />
+            @Html.ValidationSummary()
+        </div>
+    }
+
+    <div class="row">
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th style="width: 10%">UOM</th>
+                <th style="width: 10%">Qty</th>
+                <th class="text-right" style="width: 15%">Unit Price </th>
+                <th class="text-right" style="width: 15%">SubTotal </th>
+            </tr>
+            @for (int i = 0; i < Model.Lines.Count; i++) {
+                <tr>
+                    <td>
+                        @Html.HiddenFor(x => x.Lines[i].CartLineID)
+                        @Html.HiddenFor(x => x.Lines[i].Product.ProductID)
+                        @Html.HiddenFor(x => x.Lines[i].Product.ItemCode)
+                        @Html.HiddenFor(x => x.Lines[i].Product.Name)
+                        @Html.HiddenFor(x => x.Lines[i].Product.Currency)
+                        @Html.DisplayFor(x => x.Lines[i].Product.ItemCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => x.Lines[i].Product.Name)
+                    </td>
+                    <td>@Html.DisplayFor(x => x.Lines[i].Product.UOM)</td>
+                    <td>@Html.TextBoxFor(x => x.Lines[i].Quantity, new { @class = "form-control quantity", type = "number", required = "required", data_lineId = Model.Lines[i].CartLineID, min = "0", step = "0.01" })</td>
+
+                    <td class="text-right">@Html.TextBoxFor(x => x.Lines[i].Price, new { @class = "form-control price text-right", type = "number", required = "required", data_lineId = Model.Lines[i].CartLineID, min = "0", step = "0.01" })</td>
+                    <td class="text-right">
+                        <span class="subtotal" data-lineId="@Model.Lines[i].CartLineID"></span>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td>Free Gift</td>
+                <td colspan="5"><input asp-for="Order.FreeGift" class="form-control" placeholder="Free Gift (Optional)" /></td>
+            </tr>
+            <tr>
+                <td>Discount</td>
+                <td colspan="4"><input asp-for="Order.DiscountDetail" class="form-control" placeholder="Enter Discount Details (Optional)" /></td>
+                <td class="text-right"><input asp-for="Order.Discount" class="form-control text-right" type="number" min="0" step="0.01" id="discount" value="@(Model.Order.Discount ?? 0)" /></td>
+            </tr>
+            <tr>
+                <td>Shipping Fee</td>
+                <td colspan="4"><input asp-for="Order.ShippingDetail" class="form-control" placeholder="Enter Shipping Details (Optional)" /></td>
+                <td class="text-right"><input asp-for="Order.ShippingCharge" class="form-control text-right" type="number" min="0" step="0.01" id="shipping" value="@(Model.Order.ShippingCharge ?? 0)" /></td>
+            </tr>
+            <tr>
+                <td>Tax</td>
+                <td colspan="4"><input asp-for="Order.TaxDetail" class="form-control" placeholder="Enter Tax Details (Optional)" /></td>
+                <td class="text-right"><input asp-for="Order.Tax" class="form-control text-right" type="number" min="0" step="0.01" id="tax" value="@(Model.Order.Tax ?? 0)" /></td>
+            </tr>
+            <tr>
+                <td>Other Charge</td>
+                <td colspan="4"><input asp-for="Order.OtherDetail" class="form-control" placeholder="Enter Other Charges Details (Optional)" /></td>
+                <td class="text-right"><input asp-for="Order.OtherCharge" class="form-control text-right" type="number" min="0" step="0.01" id="other" value="@(Model.Order.OtherCharge ?? 0)" /></td>
+            </tr>
+
+            <tr>
+                <th colspan="5">Total</th>
+                <th class="text-right">
+                    <span id="totalAmount"></span>
+                </th>
+            </tr>
+        </table>
+    </div>
+    <hr />
+    <div class="row mb-2 pt-3">
+        <div class="col-sm-2">
+            <label>Company: <span style="color:red">*</span></label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.CompanyName" class="form-control" required />
+        </div>
+        <div class="col-sm-2">
+            <label>Contact Person:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.ContactPerson" class="form-control" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-2">
+            <label>Phone No.: <span style="color:red">*</span></label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.PhoneNo" class="form-control" required />
+        </div>
+        <div class="col-sm-2">
+            <label>Email Address: <span style="color:red">*</span></label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.Email" class="form-control" required type="email" />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-2">
+            <label>Address: </label>
+        </div>
+        <div class="col-sm-10">
+            <input asp-for="Order.Line1" class="form-control" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-10">
+            <input asp-for="Order.Line2" class="form-control" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-10">
+            <input asp-for="Order.Line3" class="form-control" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-2">
+            <label>City:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.City" class="form-control" />
+        </div>
+        <div class="col-sm-2">
+            <label>State: </label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.State" class="form-control" />
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-2">
+            <label>Zip:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.Zip" class="form-control" />
+        </div>
+        <div class="col-sm-2">
+            <label>Country:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Order.Country" class="form-control" list="country" />
+            <datalist id="country">
+                <option value="Afghanistan"></option>
+                <option value="Albania"></option>
+                <option value="Algeria"></option>
+                <option value="Andorra"></option>
+                <option value="Angola"></option>
+                <option value="Antigua &amp; Deps"></option>
+                <option value="Argentina"></option>
+                <option value="Armenia"></option>
+                <option value="Australia"></option>
+                <option value="Austria"></option>
+                <option value="Azerbaijan"></option>
+                <option value="Bahamas"></option>
+                <option value="Bahrain"></option>
+                <option value="Bangladesh"></option>
+                <option value="Barbados"></option>
+                <option value="Belarus"></option>
+                <option value="Belgium"></option>
+                <option value="Belize"></option>
+                <option value="Benin"></option>
+                <option value="Bhutan"></option>
+                <option value="Bolivia"></option>
+                <option value="Bosnia Herzegovina"></option>
+                <option value="Botswana"></option>
+                <option value="Brazil"></option>
+                <option value="Brunei"></option>
+                <option value="Bulgaria"></option>
+                <option value="Burkina"></option>
+                <option value="Burundi"></option>
+                <option value="Cambodia"></option>
+                <option value="Cameroon"></option>
+                <option value="Canada"></option>
+                <option value="Cape Verde"></option>
+                <option value="Central African Rep"></option>
+                <option value="Chad"></option>
+                <option value="Chile"></option>
+                <option value="China"></option>
+                <option value="Colombia"></option>
+                <option value="Comoros"></option>
+                <option value="Congo"></option>
+                <option value="Congo {Democratic Rep}"></option>
+                <option value="Costa Rica"></option>
+                <option value="Croatia"></option>
+                <option value="Cuba"></option>
+                <option value="Cyprus"></option>
+                <option value="Czech Republic"></option>
+                <option value="Denmark"></option>
+                <option value="Djibouti"></option>
+                <option value="Dominica"></option>
+                <option value="Dominican Republic"></option>
+                <option value="Timor Leste"></option>
+                <option value="Ecuador"></option>
+                <option value="Egypt"></option>
+                <option value="El Salvador"></option>
+                <option value="Equatorial Guinea"></option>
+                <option value="Eritrea"></option>
+                <option value="Estonia"></option>
+                <option value="Ethiopia"></option>
+                <option value="Fiji"></option>
+                <option value="Finland"></option>
+                <option value="France"></option>
+                <option value="Gabon"></option>
+                <option value="Gambia"></option>
+                <option value="Georgia"></option>
+                <option value="Germany"></option>
+                <option value="Ghana"></option>
+                <option value="Greece"></option>
+                <option value="Grenada"></option>
+                <option value="Guatemala"></option>
+                <option value="Guinea"></option>
+                <option value="Guinea-Bissau"></option>
+                <option value="Guyana"></option>
+                <option value="Haiti"></option>
+                <option value="Honduras"></option>
+                <option value="Hungary"></option>
+                <option value="Iceland"></option>
+                <option value="India"></option>
+                <option value="Indonesia"></option>
+                <option value="Iran"></option>
+                <option value="Iraq"></option>
+                <option value="Ireland {Republic}"></option>
+                <option value="Israel"></option>
+                <option value="Italy"></option>
+                <option value="Ivory Coast"></option>
+                <option value="Jamaica"></option>
+                <option value="Japan"></option>
+                <option value="Jordan"></option>
+                <option value="Kazakhstan"></option>
+                <option value="Kenya"></option>
+                <option value="Kiribati"></option>
+                <option value="Korea North"></option>
+                <option value="Korea South"></option>
+                <option value="Kuwait"></option>
+                <option value="Kyrgyzstan"></option>
+                <option value="Laos"></option>
+                <option value="Latvia"></option>
+                <option value="Lebanon"></option>
+                <option value="Lesotho"></option>
+                <option value="Liberia"></option>
+                <option value="Libya"></option>
+                <option value="Liechtenstein"></option>
+                <option value="Lithuania"></option>
+                <option value="Luxembourg"></option>
+                <option value="Macedonia"></option>
+                <option value="Madagascar"></option>
+                <option value="Malawi"></option>
+                <option value="Malaysia"></option>
+                <option value="Maldives"></option>
+                <option value="Mali"></option>
+                <option value="Malta"></option>
+                <option value="Marshall Islands"></option>
+                <option value="Mauritania"></option>
+                <option value="Mauritius"></option>
+                <option value="Mexico"></option>
+                <option value="Micronesia"></option>
+                <option value="Moldova"></option>
+                <option value="Monaco"></option>
+                <option value="Mongolia"></option>
+                <option value="Montenegro"></option>
+                <option value="Morocco"></option>
+                <option value="Mozambique"></option>
+                <option value="Myanmar, {Burma}"></option>
+                <option value="Namibia"></option>
+                <option value="Nauru"></option>
+                <option value="Nepal"></option>
+                <option value="Netherlands"></option>
+                <option value="New Zealand"></option>
+                <option value="Nicaragua"></option>
+                <option value="Niger"></option>
+                <option value="Nigeria"></option>
+                <option value="Norway"></option>
+                <option value="Oman"></option>
+                <option value="Pakistan"></option>
+                <option value="Palau"></option>
+                <option value="Panama"></option>
+                <option value="Papua New Guinea"></option>
+                <option value="Paraguay"></option>
+                <option value="Peru"></option>
+                <option value="Philippines"></option>
+                <option value="Poland"></option>
+                <option value="Portugal"></option>
+                <option value="Qatar"></option>
+                <option value="Romania"></option>
+                <option value="Russian Federation"></option>
+                <option value="Rwanda"></option>
+                <option value="St Kitts &amp; Nevis"></option>
+                <option value="St Lucia"></option>
+                <option value="Saint Vincent &amp; the Grenadines"></option>
+                <option value="Samoa"></option>
+                <option value="San Marino"></option>
+                <option value="Sao Tome &amp; Principe"></option>
+                <option value="Saudi Arabia"></option>
+                <option value="Senegal"></option>
+                <option value="Serbia"></option>
+                <option value="Seychelles"></option>
+                <option value="Sierra Leone"></option>
+                <option value="Singapore"></option>
+                <option value="Slovakia"></option>
+                <option value="Slovenia"></option>
+                <option value="Solomon Islands"></option>
+                <option value="Somalia"></option>
+                <option value="South Africa"></option>
+                <option value="Spain"></option>
+                <option value="Sri Lanka"></option>
+                <option value="Sudan"></option>
+                <option value="Suriname"></option>
+                <option value="Swaziland"></option>
+                <option value="Sweden"></option>
+                <option value="Switzerland"></option>
+                <option value="Syria"></option>
+                <option value="Taiwan"></option>
+                <option value="Tajikistan"></option>
+                <option value="Tanzania"></option>
+                <option value="Thailand"></option>
+                <option value="Togo"></option>
+                <option value="Tonga"></option>
+                <option value="Trinidad &amp; Tobago"></option>
+                <option value="Tunisia"></option>
+                <option value="Turkey"></option>
+                <option value="Turkmenistan"></option>
+                <option value="Tuvalu"></option>
+                <option value="Uganda"></option>
+                <option value="Ukraine"></option>
+                <option value="United Arab Emirates"></option>
+                <option value="United Kingdom"></option>
+                <option value="United States of America"></option>
+                <option value="Uruguay"></option>
+                <option value="Uzbekistan"></option>
+                <option value="Vanuatu"></option>
+                <option value="Vatican City"></option>
+                <option value="Venezuela"></option>
+                <option value="Vietnam"></option>
+                <option value="Yemen"></option>
+                <option value="Zambia"></option>
+                <option value="Zimbabwe"></option>
+            </datalist>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-2">
+            <label>Message: </label>
+        </div>
+        <div class="col-sm-10">
+            <textarea asp-for="Order.CustomerRemark" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <input class="btn btn-primary" type="submit" value="Save" />
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            updatePrice();
+
+            $(".quantity, .price, #shipping, #tax, #other, #discount").change(function () {
+                updatePrice();
+            });
+        });
+
+        function updatePrice() {
+            var sum = 0;
+            $('.price').each(function () {
+                var lineId = $(this).attr("data-lineId");
+                var qty = $('.quantity[data-lineId="' + lineId + '"]').val();
+                var total = parseFloat(this.value) * parseFloat(qty);
+                $('.subtotal[data-lineId="' + lineId + '"]').text(total.toFixed(2));
+                sum += total;
+            });
+
+            sum = sum + parseFloat($('#shipping').val()) + parseFloat($('#tax').val()) + parseFloat($('#other').val()) - parseFloat($('#discount').val());
+
+            $('#totalAmount').text(sum.toFixed(2));
+        }
+    </script>
+}

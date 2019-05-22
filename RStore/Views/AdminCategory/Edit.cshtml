@@ -1,0 +1,46 @@
+﻿@model CategoryViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h4>Edit Category</h4>
+@if (TempData["error"] != null) {
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Category.CategoryID" />
+        <div class="form-group">
+            <label asp-for="Category.CategoryName"></label>
+            <div><span asp-validation-for="Category.CategoryName" class="text-danger"></span></div>
+            <input asp-for="Category.CategoryName" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Category.Description"></label>
+            <textarea asp-for="Category.Description" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="Category.Order"></label>
+            <input asp-for="Category.Order" class="form-control" type="number" />
+        </div>
+        <div class="form-group">
+            <label>Parent Category</label>
+            <select asp-for="Category.ParentID" class="form-control"
+                    asp-items="@(new SelectList(Model.Categories,"CategoryID","CategoryName", Model.Category.ParentCategory == null ? 0 : Model.Category.ParentID))">
+                <option value="">Please select one</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Category.Disable"></label>
+            <input asp-for="Category.Disable" type="checkbox" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Category.IsMainCategory"></label>
+            <input asp-for="Category.IsMainCategory" type="checkbox" />
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+

@@ -1,0 +1,50 @@
+﻿@model ComponentEditViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h4>Edit Component </h4>
+@if (TempData["error"] != null) {
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Component.ComponentID" />
+    <div class="form-group">
+        <label asp-for="Component.Name"></label>
+        <div><span asp-validation-for="Component.Name" class="text-danger"></span></div>
+        <input asp-for="Component.Name" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="Component.Type"></label>
+        <div><span asp-validation-for="Component.Type" class="text-danger"></span></div>
+        <select asp-for="Component.Type" class="form-control"
+                asp-items="@(new SelectList(Model.Types, Model.Component.Type))" required>
+            <option value="">Please select one</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Component.Content"></label>
+        <textarea asp-for="Component.Content" class="form-control" name="Component.Content"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="Component.Order"></label>
+        <input asp-for="Component.Order" class="form-control" type="number" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Component.Disable"></label>
+        <input asp-for="Component.Disable" type="checkbox" />
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="//cdn.ckeditor.com/4.10.1/full/ckeditor.js"></script>
+    <script>
+        CKEDITOR.config.startupMode = 'source';
+        CKEDITOR.replace('Component.Content');
+    </script>
+}

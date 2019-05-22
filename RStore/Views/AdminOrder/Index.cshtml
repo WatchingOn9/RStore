@@ -1,0 +1,132 @@
+﻿@model OrderListViewModel
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<h4>Request For Quotation / Orders</h4>
+@if (TempData["message"] != null) {
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+@if (TempData["error"] != null) {
+    <div class="alert alert-danger">
+        @TempData["error"]<br />
+        @Html.ValidationSummary()
+    </div>
+}
+@if (Model.Orders.Count() > 0) {
+    <table class="table table-bordered table-striped">
+        <tr><th>Date</th><th>Company Detail</th><th>Details</th><th>Actions</th></tr>
+        @foreach (Order o in Model.Orders) {
+            <tr>
+                <td>
+                    @o.CreatedDate.ToString("yyyy/MM/dd hh:mm:ss")
+
+                    @if (!string.IsNullOrEmpty(o.QuotationNo)) {
+                        <br /><br />
+                        @:Quotation No: @o.QuotationNo
+                    }
+                </td>
+                <td>
+                    @o.CompanyName <br />
+                    @o.City, @o.State @o.Country <br />
+                    @o.ContactPerson <br />
+                    @o.PhoneNo <br />
+                    @o.Email <br />
+                    @o.CustomerRemark
+                </td>
+                <td>
+                    <table class="table">
+                        <tr>
+                            <th>Product</th>
+                            <th>UOM</th>
+                            <th>Qty</th>
+                            <th class="text-right">Unit Price @(string.IsNullOrEmpty(o.Currency) ? "" : "(" + o.Currency + ")")</th>
+                            <th class="text-right">SubTotal @(string.IsNullOrEmpty(o.Currency) ? "" : "(" + o.Currency + ")")</th>
+                        </tr>
+                        @foreach (CartLine line in o.Lines) {
+                            <tr>
+                                <td>@line.Product.Name</td>
+                                <td>@line.Product.UOM</td>
+                                <td>@line.Quantity</td>
+                                <td class="text-right">@line.Price.ToString("#,##0.00")</td>
+                                <td class="text-right">@((line.Price * line.Quantity).ToString("#,##0.00"))</td>
+                            </tr>
+                        }
+                        @if (!string.IsNullOrEmpty(o.FreeGift)) {
+                            <tr>
+                                <td colspan="4">Free: @o.FreeGift</td>
+                                <td class="text-right">0.00</td>
+                            </tr>
+                        }
+                        @if (o.Discount > 0) {
+                            <tr>
+                                <td colspan="4">@o.DiscountDetail</td>
+                                <td class="text-right">@((o.Discount ?? 0).ToString("#,##0.00"))</td>
+                            </tr>
+                        }
+                        @if (o.ShippingCharge > 0) {
+                            <tr>
+                                <td colspan="4">@o.ShippingDetail</td>
+                                <td class="text-right">@((o.ShippingCharge ?? 0).ToString("#,##0.00"))</td>
+                            </tr>
+                        }
+                        @if (o.Tax > 0) {
+                            <tr>
+                                <td colspan="4">@o.TaxDetail</td>
+                                <td class="text-right">@((o.Tax ?? 0).ToString("#,##0.00"))</td>
+                            </tr>
+                        }
+                        @if (o.OtherCharge > 0) {
+                            <tr>
+                                <td colspan="4">@o.OtherDetail</td>
+                                <td class="text-right">@((o.OtherCharge ?? 0).ToString("#,##0.00"))</td>
+                            </tr>
+                        }
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">Total</td>
+                                <td class="text-right">@((o.Lines.Sum(x => x.Quantity * x.Price) + (o.Tax ?? 0) + (o.OtherCharge ?? 0) + (o.ShippingCharge ?? 0) - (o.Discount ?? 0)).ToString("#,##0.00"))</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </td>
+
+                <td>
+                    @if (!o.Sent) {
+                        <a asp-action="ViewDetail" asp-route-Id="@o.OrderID" class="btn btn-sm btn-primary mb-2">Edit Quotation</a>
+                        <form asp-action="SendMail" method="post" onsubmit="return confirm('Do you really want to send out quotation by email?');">
+                            <input type="hidden" name="orderId" value="@o.OrderID" />
+                            <button type="submit" class="btn btn-sm btn-success mb-2">Send Quotation</button>
+                        </form>
+                        <form asp-action="MarkSent" method="post" onsubmit="return confirm('Do you really want to mark as sent?');">
+                            <input type="hidden" name="orderId" value="@o.OrderID" />
+                            <button type="submit" class="btn btn-sm btn-secondary mb-2">Mark as Sent</button>
+                        </form>
+                    } else {
+                        <form asp-action="SendMail" method="post" onsubmit="return confirm('Do you really want to resend the quotation?');">
+                            <input type="hidden" name="orderId" value="@o.OrderID" />
+                            <button type="submit" class="btn btn-sm btn-warning mb-2">Resend Quotation</button>
+                        </form>
+                    }
+                    <form asp-action="MarkCancelled" method="post" onsubmit="return confirm('Do you really want to delete?');">
+                        <input type="hidden" name="orderId" value="@o.OrderID" />
+                        <button type="submit" class="btn btn-sm btn-danger mb-2">Delete</button>
+                    </form>
+                </td>
+            </tr>
+
+        }
+    </table>
+} else {
+    <div class="text-center">No Orders</div>
+}
+
+<div page-model="@Model.PagingInfo" page-action="Index" page-classes-enabled="true"
+     page-class="btn" page-class-normal="btn-secondary"
+     page-class-selected="btn-primary"
+     class="btn-group pull-right m-1">
+</div>
+
+
+

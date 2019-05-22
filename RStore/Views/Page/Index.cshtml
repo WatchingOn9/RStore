@@ -1,0 +1,25 @@
+﻿@model PageViewModel
+
+@Html.Raw(Model.Page.Content)
+
+@if (Model.Page.ShowProduct) {
+    @await Component.InvokeAsync("ProductList", new { category = Model.CurrentCategory, page = Model.ProductPage })
+}
+
+@if (Model.Page.ShowEnquiryForm) {
+    @await Component.InvokeAsync("ContactForm")
+}
+
+@section Scripts {
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    @if (Model.Page.PageID != 1) {
+    <script>
+        $(document).ready(function() {
+            $(window).scrollTop($('#anchor').offset().top - 200);
+        });
+    </script>
+     }
+        
+
+    }

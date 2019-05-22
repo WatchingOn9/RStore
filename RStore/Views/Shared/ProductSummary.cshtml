@@ -1,0 +1,32 @@
+﻿@model Product
+
+@{ 
+    var image = string.IsNullOrEmpty(Model.ThumbImage) ? "none.jpg" : Model.ThumbImage;
+}
+
+<div class="col-sm-3 p-1 d-flex flex-column fix-height-280">
+    <div class="thumbnail store style1 pb-2 fix-height-220">
+        <div class="h-100 header">
+            <figure class="h-100 layer">
+                <a href="javascript:void(0);">
+                    <img src="~/images/products/@image" alt="@Model.Name" class="h-100 img-fit" />
+                </a>
+            </figure>
+            <div class="icons mt-auto">
+                <form id="@Model.ProductID" asp-action="AddToCart" asp-controller="Cart" method="post">
+                    <input type="hidden" asp-for="ProductID" />
+                    <input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.Path" />
+                    <button type="submit" class="icon semi-circle">
+                        <i class="fa fa-cart-plus"></i>
+                    </button>
+                    <a class="icon semi-circle" asp-controller="Product" asp-action="Index" asp-route-Id="@Model.ProductID"><i class="fa fa-search"></i></a>
+                </form>
+                
+            </div>
+        </div>
+        <div class="caption text-center">
+            <a asp-controller="Product" asp-action="Index" asp-route-Id="@Model.ProductID">@Html.Raw(Model.Name)</a>
+        </div><!-- end caption -->
+    </div>
+</div>
+

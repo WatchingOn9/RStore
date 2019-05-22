@@ -1,0 +1,164 @@
+﻿@model Setting
+@{
+    Layout = "_AdminLayout";
+}
+
+<h4>Settings</h4>
+@if (TempData["message"] != null) {
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+@if (TempData["error"] != null) {
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+    <form asp-action="Index" method="post">
+        <input type="hidden" asp-for="SettingID" />
+        <div class="form-group">
+            <label asp-for="SiteTitle"></label>
+            <div><span asp-validation-for="SiteTitle" class="text-danger"></span></div>
+            <input asp-for="SiteTitle" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="MetaDescription"></label>
+            <div><span asp-validation-for="MetaDescription" class="text-danger"></span></div>
+            <input asp-for="MetaDescription" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="MetaKeywords"></label>
+            <div><span asp-validation-for="MetaKeywords" class="text-danger"></span></div>
+            <input asp-for="MetaKeywords" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Logo"></label>
+            <input type="hidden" asp-for="Logo" />
+            <br />
+            <input type="file" name="logo" />
+            <br />
+            @if (string.IsNullOrEmpty(Model.Logo)) {
+                <div class="form-control-static">No Logo</div>
+            } else {
+                <img class="img-thumbnail" width="150" height="150" src="@Url.Content("~/images/" + @Model.Logo)" />
+            }
+        </div>
+        <div class="form-group">
+            <label asp-for="AdminLogo"></label>
+            <input type="hidden" asp-for="AdminLogo" />
+            <br />
+            <input type="file" name="adminLogo" />
+            <br />
+            @if (string.IsNullOrEmpty(Model.AdminLogo)) {
+                <div class="form-control-static">No Admin Logo</div>
+            } else {
+                <img class="img-thumbnail" width="150" height="150" src="@Url.Content("~/images/" + @Model.AdminLogo)" />
+            }
+        </div>
+        <div class="form-group">
+            <label asp-for="Closed"></label>
+            <input asp-for="Closed" type="checkbox" />
+        </div>
+        <div class="form-group">
+            <label asp-for="CompanyName"></label>
+            <div><span asp-validation-for="CompanyName" class="text-danger"></span></div>
+            <input asp-for="CompanyName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="RegNo"></label>
+            <div><span asp-validation-for="RegNo" class="text-danger"></span></div>
+            <input asp-for="RegNo" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Address1"></label>
+            <div><span asp-validation-for="Address1" class="text-danger"></span></div>
+            <input asp-for="Address1" class="form-control" />
+        </div>
+        <div class="form-group">
+            <div><span asp-validation-for="Address2" class="text-danger"></span></div>
+            <input asp-for="Address2" class="form-control" />
+        </div>
+        <div class="form-group">
+            <div><span asp-validation-for="Address3" class="text-danger"></span></div>
+            <input asp-for="Address3" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="PhoneNo"></label>
+            <div><span asp-validation-for="PhoneNo" class="text-danger"></span></div>
+            <input asp-for="PhoneNo" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="FaxNo"></label>
+            <div><span asp-validation-for="FaxNo" class="text-danger"></span></div>
+            <input asp-for="FaxNo" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <div><span asp-validation-for="Email" class="text-danger"></span></div>
+            <input asp-for="Email" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="AdminEmail"></label>
+            <div><span asp-validation-for="AdminEmail" class="text-danger"></span></div>
+            <input asp-for="AdminEmail" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="FacebookPageID"></label>
+            <div><span asp-validation-for="FacebookPageID" class="text-danger"></span></div>
+            <input asp-for="FacebookPageID" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="FacebookPageUrl"></label>
+            <div><span asp-validation-for="FacebookPageUrl" class="text-danger"></span></div>
+            <input asp-for="FacebookPageUrl" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Host"></label>
+            <div><span asp-validation-for="Host" class="text-danger"></span></div>
+            <input asp-for="Host" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Port"></label>
+            <div><span asp-validation-for="Port" class="text-danger"></span></div>
+            <input asp-for="Port" class="form-control" type="number" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EnableSsl"></label>
+            <input asp-for="EnableSsl" type="checkbox" />
+        </div>
+        <div class="form-group">
+            <label asp-for="FromEmail"></label>
+            <div><span asp-validation-for="FromEmail" class="text-danger"></span></div>
+            <input asp-for="FromEmail" class="form-control" type="email" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <div><span asp-validation-for="Password" class="text-danger"></span></div>
+            <input asp-for="Password" class="form-control" type="password" value="@Model.Password" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EmailHeader"></label>
+            <textarea asp-for="EmailHeader" class="form-control" name="EmailHeader"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="Signature"></label>
+            <textarea asp-for="Signature" class="form-control" name="Signature"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="EmailFormat"></label><br />
+            <small>(Wildcards: *QuotationNo* / *CompanyName* / *ContactPerson* / *PhoneNo* / *Email* / *Address* / *CustomerRemark* / *Items* / *TodayDate*)</small>
+            <textarea asp-for="EmailFormat" class="form-control" name="EmailFormat"></textarea>
+        </div>
+
+
+        <div class="pull-left">
+            <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+    </form>
+
+@section Scripts {
+    <script src="//cdn.ckeditor.com/4.10.1/full/ckeditor.js"></script>
+    <script>
+        CKEDITOR.config.startupMode = 'source';
+        CKEDITOR.replace('EmailHeader');
+        CKEDITOR.replace('EmailFormat');
+        CKEDITOR.replace('Signature');
+    </script>
+}
+

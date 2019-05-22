@@ -1,0 +1,19 @@
+﻿@model ProductsListViewModel
+
+<h4>@(Model.CurrentCategory == null ? "All Products" : Model.CurrentCategory)</h4>
+
+@Html.Raw(Model.CurrentCategoryDesc)
+
+<div class="row d-flex flex-column flex-md-row mb-3">
+    @foreach (var p in Model.Products) {
+        @await Html.PartialAsync("ProductSummary", p)
+    }
+</div>
+
+<div page-model="@Model.PagingInfo" page-action="Index" page-classes-enabled="true"
+     page-class="btn" page-class-normal="btn-secondary"
+     page-class-selected="btn-primary" 
+     page-url-category="@Model.CurrentCategory"
+     page-url-Id="3"
+     class="btn-group pull-right m-1">
+</div>

@@ -1,0 +1,27 @@
+﻿@model Category
+
+<li class="nav-item">
+    @if (Model.Childs.Any()) {
+    <div class="dropright">
+        <a class="dropdown-toggle nav-link @(Model.CategoryName == ViewBag.SelectedCategory ? "active" : "")" data-toggle="dropdown" href="#">
+            @Model.CategoryName
+            <i class="fa fa-angle-right float-right align-bottom" style="line-height: 15pt"></i>
+        </a>
+        @foreach (var child in Model.Childs) {
+            <ul class="dropdown-menu">
+                @await Html.PartialAsync("CategoryItem", child)
+            </ul>
+        }
+
+    </div>   
+    } else {
+        <a is-active-route class="nav-link @(Model.CategoryName == ViewBag.SelectedCategory ? "active" : "")"
+           asp-action="Index"
+           asp-controller="Page"
+           asp-route-category="@Model.CategoryName"
+           asp-route-productPage="1"
+           asp-route-Id="3">
+            @Html.Raw(Model.CategoryName)
+        </a>
+    }
+</li>

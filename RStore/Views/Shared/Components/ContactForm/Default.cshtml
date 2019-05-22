@@ -1,0 +1,122 @@
+﻿@model ContactFormViewModel
+
+
+<div class="container pb-3 mt-3 white-background contactus">
+    <form asp-controller="ContactUs" asp-action="Submit" method="post">
+
+        <h5 class="pt-3">Submit Your Enquiry</h5>
+        <div class="row mb-3">
+            <div class="col-sm-12">
+                <small>We're welcome any inquries or favorable feedback from you. You may submit in your inquries via our web form below, or alternatively, you may either email us. We will try our best to reply you as soon as possible.</small>
+            </div>
+        </div>
+        @if (TempData["message"] != null) {
+            <div class="alert alert-success">@TempData["message"]</div>
+        }
+        @if (TempData["error"] != null) {
+            <div class="alert alert-danger small">
+                @Html.Raw(TempData["error"])
+            </div>
+        }
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label asp-for="Name"></label><span style="color:red">*</span>
+            </div>
+            <div class="col-sm-5">
+                <input asp-for="Name" class="form-control" required />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label asp-for="Company"></label>
+            </div>
+            <div class="col-sm-5">
+                <input asp-for="Company" class="form-control" />
+            </div>
+        </div>
+
+        @if (Model.Product != null) {
+            <div class="row mb-2">
+                <div class="col-sm-3">
+                    <label asp-for="ProductInterested"></label>
+                </div>
+                <div class="col-sm-5">
+                    <input type="hidden" name="productId" value="@Model.Product.ProductID" />
+                    <input asp-for="ProductInterested" class="form-control" value="@Model.Product.Name (Product Code: @Model.Product.ItemCode)" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-sm-3">
+                    <label asp-for="Qty"></label>
+                </div>
+                <div class="col-sm-2">
+                    <input asp-for="Qty" class="form-control" min="1" value="1" type="number" required />
+                </div>
+            </div>
+        } else {
+            <input type="hidden" name="pageId" value="@ViewContext.RouteData.Values["Id"].ToString()" />
+        }
+
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label asp-for="Email"></label><span style="color:red">*</span>
+            </div>
+            <div class="col-sm-4">
+                <input asp-for="Email" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label asp-for="ContactNo"></label><span style="color:red">*</span>
+            </div>
+            <div class="col-sm-4">
+                <input asp-for="ContactNo" class="form-control" required />
+            </div>
+        </div>
+
+        @if (Model.Product != null) {
+            <div class="row mb-2">
+                <div class="col-sm-3">
+                    <label asp-for="ShipToName"></label>
+                </div>
+                <div class="col-sm-5">
+                    <input asp-for="ShipToName" class="form-control" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-3">
+                    <label asp-for="ShipToAddress"></label>
+                </div>
+                <div class="col-sm-6">
+                    <textarea asp-for="ShipToAddress" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+        }
+
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <label asp-for="Message"></label>
+            </div>
+            <div class="col-sm-6">
+                <textarea asp-for="Message" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                &nbsp;
+            </div>
+            <div class="col-sm-9">
+                <div class="g-recaptcha" data-sitekey="@(Configuration["ReCaptcha:SiteKey"])"></div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <input class="btn btn-primary" type="submit" value="Submit Enquiry" />
+        </div>
+    </form>
+</div>
+
+
+

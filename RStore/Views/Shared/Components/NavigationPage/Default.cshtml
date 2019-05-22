@@ -1,0 +1,11 @@
+﻿@model IEnumerable<Page>
+
+<ul class="navbar-nav w-100 menu">
+    @foreach (var item in Model) {
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Page" asp-action="Index" asp-route-Id="@item.PageID">
+                @Html.Raw(item.Title)
+            </a>
+        </li>
+    }
+</ul>

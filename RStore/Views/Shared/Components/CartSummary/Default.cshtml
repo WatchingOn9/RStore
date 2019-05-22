@@ -1,0 +1,15 @@
+﻿@model Cart
+
+<div class="">
+    <small class="d-none d-sm-inline">
+        <b>Your Enquiry Item(s):</b>
+        @Model.Lines.Count() item(s) &nbsp;
+    </small>
+    <a class="btn btn-sm btn-danger navbar-btn"
+       asp-controller="Cart" asp-action="Index"
+       asp-route-returnUrl="@ViewContext.HttpContext.Request.Path">
+        <i class="fa fa-shopping-cart"></i>
+    </a>
+</div>
+
+

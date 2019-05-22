@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Product>
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<h4>Products</h4>
+
+@if (TempData["message"] != null) {
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+<input class="form-control" id="myInput" type="text" placeholder="Search..">
+<br />
+<table class="table table-striped table-bordered table-sm">
+    <thead>
+        <tr>
+            <th class="text-right">ID</th>
+            <th class="text-left">ItemCode</th>
+            <th class="text-left">Barcode</th>
+            <th class="text-left">Product Name</th>
+            <th class="text-left">Category</th>
+            <th class="text-left">Thumbnail</th>
+            <th class="text-right">Default Price</th>
+            <th class="text-right">UOM</th>
+            <th class="text-right">Disable?</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+        @foreach (var item in Model) {
+            <tr>
+                <td class="text-right">@item.ProductID</td>
+                <td class="text-left">@item.ItemCode</td>
+                <td class="text-left">@item.Barcode</td>
+                <td class="text-left">@item.Name</td>
+                <td class="text-left">@(item.Category == null ? "" : item.Category.CategoryName)</td>
+                <td>
+                    @if (string.IsNullOrEmpty(item.ThumbImage)) {
+                        <div class="form-control-static">No Image</div>
+                    } else {
+                        <img class="img-thumbnail" width="50" height="50" src="@Url.Content("~/images/products/" + item.ThumbImage)" />
+                    }
+                </td>
+                <td class="text-right">@item.Currency @item.Price.ToString("#,##0.00")</td>
+                <td class="text-right">@item.UOM</td>
+                <td class="text-right">@item.Disable</td>
+                <td class="text-center">
+                    <form asp-action="Delete" method="post">
+                        <a asp-action="Edit" class="btn btn-sm btn-warning"
+                           asp-route-productId="@item.ProductID">
+                            Edit
+                        </a>
+                        <input type="hidden" name="ProductID" value="@item.ProductID" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this item?');">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="pull-left">
+    <a asp-action="Create" class="btn btn-primary">Add Product</a>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+    }

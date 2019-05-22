@@ -1,0 +1,15 @@
+﻿<h3 class="mb-3">Thanks!</h3>
+<p>
+    Thanks for interesting on our products.<br />
+    We'll get back to you as soon as possible.
+</p>
+
+<a class="btn btn-primary" asp-controller="Page" asp-action="Index" asp-route-Id="1">Back to Home</a>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(window).scrollTop($('#anchor').offset().top - 200);
+        });
+    </script>
+}

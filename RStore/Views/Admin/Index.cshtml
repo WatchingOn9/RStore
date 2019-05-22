@@ -1,0 +1,48 @@
+﻿@model DashboardViewModel
+
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<h4>Welcome To Secret Base, @User.Identity.Name .</h4>
+<br />
+<div class="row">
+    <div class="col-sm-5">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 30%">Statistic</th>
+                    <th class="text-center">Pending / Total</th>
+                </tr>
+            </thead>
+            <tr>
+                <td class="text-left">Requests & Orders</td>
+                <td class="text-center"><a asp-action="Index" asp-controller="AdminOrder">@Model.ActiveOrderCount / @Model.TotalOrderCount</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-sm-5">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 30%">Statistic</th>
+                    <th class="text-center">Active / Total</th>
+                </tr>
+            </thead>
+            <tr>
+                <td class="text-left">Categories</td>
+                <td class="text-center"><a asp-action="Index" asp-controller="AdminCategory">@Model.ActiveCategoryCount / @Model.TotalCategoryCount</a></td>
+            </tr>
+            <tr>
+                <td class="text-left">Products</td>
+                <td class="text-center"><a asp-action="Index" asp-controller="AdminProduct">@Model.ActiveProductCount / @Model.TotalProductCount</a></td>
+            </tr>
+            <tr>
+                <td class="text-left">Slide Show</td>
+                <td class="text-center"><a asp-action="Index" asp-controller="AdminSlideShow">@Model.ActiveSlideShowCount / @Model.TotalSlideShowCount</a></td>
+            </tr>
+        </table>
+    </div>
+</div>

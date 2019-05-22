@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    @await Component.InvokeAsync("SiteTitle")
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <!-- Google fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&subset=cyrillic,cyrillic-ext,latin-ext">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800&amp;subset=latin-ext">
+    <link rel="stylesheet" href="~/css/admin.css" />
+    @RenderSection("Styles", false)
+</head>
+<body class="m-1 p-1">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">THE SECRET BASE</a>
+        <button class="navbar-toggler navbar-toggler-right navbar-icon d-block d-sm-none" type="button" data-toggle="collapse" data-target="#navbar-mobile" aria-controls="navbar-mobile" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="navbar-nav px-3 pull-right">
+            <li class="nav-item text-nowrap pr-3">
+                <a class="nav-link" asp-action="Index" asp-controller="Page" target="_blank">Home Page</a>
+            </li>
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" asp-action="Logout" asp-controller="Account">Sign out</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 bg-light sidebar collapse" id="navbar-mobile">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="Admin">
+                                <i class="fas fa-chart-line"></i> &nbsp;
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="AdminOrder">
+                                <i class="fas fa-mail-bulk"></i> &nbsp;
+                                Request Quotation / Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="AdminCategory">
+                                <i class="fas fa-cubes"></i> &nbsp;
+                                Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="AdminProduct">
+                                <i class="fas fa-barcode"></i> &nbsp;
+                                Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="AdminPage">
+                                <i class="far fa-file"></i> &nbsp;
+                                Pages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="AdminComponent">
+                                <i class="fas fa-puzzle-piece"></i> &nbsp;
+                                Components
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="AdminSlideShow">
+                                <i class="far fa-images"></i> &nbsp;
+                                Slide Shows
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a is-active-route class="nav-link" asp-action="Index" asp-controller="AdminSetting">
+                                <i class="fas fa-cog"></i> &nbsp;
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    @RenderSection("Scripts", false)
+</body>
+</html>
+
+

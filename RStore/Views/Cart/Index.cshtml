@@ -1,0 +1,404 @@
+﻿@model CartIndexViewModel
+
+<h5><i class="fa fa-shopping-basket mr-3"></i>Your Enquiry Item(s)</h5>
+@if (TempData["message"] != null) {
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+@if (TempData["error"] != null) {
+    <div class="alert alert-danger">
+        @TempData["error"]<br />
+        @Html.ValidationSummary()
+    </div>
+}
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Photo</th>
+            <th>Name</th>
+            <th class="text-center">Quantity</th>
+            <th>Update Quantity</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Cart.Lines.Any()) {
+            @foreach (var line in Model.Cart.Lines) {
+                <tr>
+                    <td class="text-left">@line.Product.ItemCode</td>
+                    <td>
+                        <a asp-controller="Product" asp-action="Index" asp-route-Id="@line.Product.ProductID" target="_blank">
+                            @if (string.IsNullOrEmpty(line.Product.ThumbImage)) {
+                                <img width="60" height="60" src="@Url.Content("~/images/products/none.jpg")" />
+                            } else {
+                                <img width="60" height="60" src="@Url.Content("~/images/products/" + line.Product.ThumbImage)" />
+                            }
+                        </a>
+                    </td>
+                    <td class="text-left"><a asp-controller="Product" asp-action="Index" asp-route-Id="@line.Product.ProductID" target="_blank">@line.Product.Name</a></td>
+                    <td class="text-center">@line.Quantity</td>
+                    <td style="width: 20%">
+                        <form id="@line.Product.ProductID" asp-action="UpdateQty" asp-controller="Cart" method="post">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <input type="hidden" name="ProductID" value="@line.Product.ProductID" />
+                                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                                    <input type="number" name="qty" class="form-control" value="@line.Quantity" required min="0" />
+                                    @*<select class="form-control-sm" name="qty" required>
+                                            @foreach (var qty in Level.Qty) {
+                                                if (qty.Key == line.Quantity) {
+                                                    <option value="@qty.Key" selected>@qty.Value</option>
+                                                } else {
+                                                    <option value="@qty.Key">@qty.Value</option>
+                                                }
+
+                                            }
+                                        </select>*@
+                                </div><!-- end col -->
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-save"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="RemoveFromCart" method="post">
+                            <input type="hidden" name="ProductID" value="@line.Product.ProductID" />
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        } else {
+            <tr>
+                <td colspan="6" class="text-center">
+                    No Item
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Cart.Lines.Any()) {
+
+    <div class="text-center">
+        <a class="btn btn-primary mr-2" href="@Model.ReturnUrl">Add More Products</a>
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            Request For Quotation
+        </button>
+    </div>
+    <div class="container pb-3 mt-3 white-background collapse" id="collapseExample">
+        <form asp-action="Checkout" method="post">
+            <h5 class="pt-3 mb-3">Send Quotation To:</h5>
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                    <label>Company: <span style="color:red">*</span></label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.CompanyName" class="form-control" required />
+                </div>
+                <div class="col-sm-2">
+                    <label>Contact Person:</label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.ContactPerson" class="form-control" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                    <label>Phone No.: <span style="color:red">*</span></label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.PhoneNo" class="form-control" required />
+                </div>
+                <div class="col-sm-2">
+                    <label>Email Address: <span style="color:red">*</span></label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.Email" class="form-control" required type="email" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                    <label>Address: </label>
+                </div>
+                <div class="col-sm-10">
+                    <input asp-for="Order.Line1" class="form-control" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-10">
+                    <input asp-for="Order.Line2" class="form-control" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-10">
+                    <input asp-for="Order.Line3" class="form-control" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                    <label>City:</label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.City" class="form-control" />
+                </div>
+                <div class="col-sm-2">
+                    <label>State: </label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.State" class="form-control" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                    <label>Zip:</label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.Zip" class="form-control" />
+                </div>
+                <div class="col-sm-2">
+                    <label>Country:</label>
+                </div>
+                <div class="col-sm-4">
+                    <input asp-for="Order.Country" class="form-control" list="country" />
+                    <datalist id="country">
+                        <option value="Afghanistan"></option>
+                        <option value="Albania"></option>
+                        <option value="Algeria"></option>
+                        <option value="Andorra"></option>
+                        <option value="Angola"></option>
+                        <option value="Antigua &amp; Deps"></option>
+                        <option value="Argentina"></option>
+                        <option value="Armenia"></option>
+                        <option value="Australia"></option>
+                        <option value="Austria"></option>
+                        <option value="Azerbaijan"></option>
+                        <option value="Bahamas"></option>
+                        <option value="Bahrain"></option>
+                        <option value="Bangladesh"></option>
+                        <option value="Barbados"></option>
+                        <option value="Belarus"></option>
+                        <option value="Belgium"></option>
+                        <option value="Belize"></option>
+                        <option value="Benin"></option>
+                        <option value="Bhutan"></option>
+                        <option value="Bolivia"></option>
+                        <option value="Bosnia Herzegovina"></option>
+                        <option value="Botswana"></option>
+                        <option value="Brazil"></option>
+                        <option value="Brunei"></option>
+                        <option value="Bulgaria"></option>
+                        <option value="Burkina"></option>
+                        <option value="Burundi"></option>
+                        <option value="Cambodia"></option>
+                        <option value="Cameroon"></option>
+                        <option value="Canada"></option>
+                        <option value="Cape Verde"></option>
+                        <option value="Central African Rep"></option>
+                        <option value="Chad"></option>
+                        <option value="Chile"></option>
+                        <option value="China"></option>
+                        <option value="Colombia"></option>
+                        <option value="Comoros"></option>
+                        <option value="Congo"></option>
+                        <option value="Congo {Democratic Rep}"></option>
+                        <option value="Costa Rica"></option>
+                        <option value="Croatia"></option>
+                        <option value="Cuba"></option>
+                        <option value="Cyprus"></option>
+                        <option value="Czech Republic"></option>
+                        <option value="Denmark"></option>
+                        <option value="Djibouti"></option>
+                        <option value="Dominica"></option>
+                        <option value="Dominican Republic"></option>
+                        <option value="Timor Leste"></option>
+                        <option value="Ecuador"></option>
+                        <option value="Egypt"></option>
+                        <option value="El Salvador"></option>
+                        <option value="Equatorial Guinea"></option>
+                        <option value="Eritrea"></option>
+                        <option value="Estonia"></option>
+                        <option value="Ethiopia"></option>
+                        <option value="Fiji"></option>
+                        <option value="Finland"></option>
+                        <option value="France"></option>
+                        <option value="Gabon"></option>
+                        <option value="Gambia"></option>
+                        <option value="Georgia"></option>
+                        <option value="Germany"></option>
+                        <option value="Ghana"></option>
+                        <option value="Greece"></option>
+                        <option value="Grenada"></option>
+                        <option value="Guatemala"></option>
+                        <option value="Guinea"></option>
+                        <option value="Guinea-Bissau"></option>
+                        <option value="Guyana"></option>
+                        <option value="Haiti"></option>
+                        <option value="Honduras"></option>
+                        <option value="Hungary"></option>
+                        <option value="Iceland"></option>
+                        <option value="India"></option>
+                        <option value="Indonesia"></option>
+                        <option value="Iran"></option>
+                        <option value="Iraq"></option>
+                        <option value="Ireland {Republic}"></option>
+                        <option value="Israel"></option>
+                        <option value="Italy"></option>
+                        <option value="Ivory Coast"></option>
+                        <option value="Jamaica"></option>
+                        <option value="Japan"></option>
+                        <option value="Jordan"></option>
+                        <option value="Kazakhstan"></option>
+                        <option value="Kenya"></option>
+                        <option value="Kiribati"></option>
+                        <option value="Korea North"></option>
+                        <option value="Korea South"></option>
+                        <option value="Kuwait"></option>
+                        <option value="Kyrgyzstan"></option>
+                        <option value="Laos"></option>
+                        <option value="Latvia"></option>
+                        <option value="Lebanon"></option>
+                        <option value="Lesotho"></option>
+                        <option value="Liberia"></option>
+                        <option value="Libya"></option>
+                        <option value="Liechtenstein"></option>
+                        <option value="Lithuania"></option>
+                        <option value="Luxembourg"></option>
+                        <option value="Macedonia"></option>
+                        <option value="Madagascar"></option>
+                        <option value="Malawi"></option>
+                        <option value="Malaysia"></option>
+                        <option value="Maldives"></option>
+                        <option value="Mali"></option>
+                        <option value="Malta"></option>
+                        <option value="Marshall Islands"></option>
+                        <option value="Mauritania"></option>
+                        <option value="Mauritius"></option>
+                        <option value="Mexico"></option>
+                        <option value="Micronesia"></option>
+                        <option value="Moldova"></option>
+                        <option value="Monaco"></option>
+                        <option value="Mongolia"></option>
+                        <option value="Montenegro"></option>
+                        <option value="Morocco"></option>
+                        <option value="Mozambique"></option>
+                        <option value="Myanmar, {Burma}"></option>
+                        <option value="Namibia"></option>
+                        <option value="Nauru"></option>
+                        <option value="Nepal"></option>
+                        <option value="Netherlands"></option>
+                        <option value="New Zealand"></option>
+                        <option value="Nicaragua"></option>
+                        <option value="Niger"></option>
+                        <option value="Nigeria"></option>
+                        <option value="Norway"></option>
+                        <option value="Oman"></option>
+                        <option value="Pakistan"></option>
+                        <option value="Palau"></option>
+                        <option value="Panama"></option>
+                        <option value="Papua New Guinea"></option>
+                        <option value="Paraguay"></option>
+                        <option value="Peru"></option>
+                        <option value="Philippines"></option>
+                        <option value="Poland"></option>
+                        <option value="Portugal"></option>
+                        <option value="Qatar"></option>
+                        <option value="Romania"></option>
+                        <option value="Russian Federation"></option>
+                        <option value="Rwanda"></option>
+                        <option value="St Kitts &amp; Nevis"></option>
+                        <option value="St Lucia"></option>
+                        <option value="Saint Vincent &amp; the Grenadines"></option>
+                        <option value="Samoa"></option>
+                        <option value="San Marino"></option>
+                        <option value="Sao Tome &amp; Principe"></option>
+                        <option value="Saudi Arabia"></option>
+                        <option value="Senegal"></option>
+                        <option value="Serbia"></option>
+                        <option value="Seychelles"></option>
+                        <option value="Sierra Leone"></option>
+                        <option value="Singapore"></option>
+                        <option value="Slovakia"></option>
+                        <option value="Slovenia"></option>
+                        <option value="Solomon Islands"></option>
+                        <option value="Somalia"></option>
+                        <option value="South Africa"></option>
+                        <option value="Spain"></option>
+                        <option value="Sri Lanka"></option>
+                        <option value="Sudan"></option>
+                        <option value="Suriname"></option>
+                        <option value="Swaziland"></option>
+                        <option value="Sweden"></option>
+                        <option value="Switzerland"></option>
+                        <option value="Syria"></option>
+                        <option value="Taiwan"></option>
+                        <option value="Tajikistan"></option>
+                        <option value="Tanzania"></option>
+                        <option value="Thailand"></option>
+                        <option value="Togo"></option>
+                        <option value="Tonga"></option>
+                        <option value="Trinidad &amp; Tobago"></option>
+                        <option value="Tunisia"></option>
+                        <option value="Turkey"></option>
+                        <option value="Turkmenistan"></option>
+                        <option value="Tuvalu"></option>
+                        <option value="Uganda"></option>
+                        <option value="Ukraine"></option>
+                        <option value="United Arab Emirates"></option>
+                        <option value="United Kingdom"></option>
+                        <option value="United States of America"></option>
+                        <option value="Uruguay"></option>
+                        <option value="Uzbekistan"></option>
+                        <option value="Vanuatu"></option>
+                        <option value="Vatican City"></option>
+                        <option value="Venezuela"></option>
+                        <option value="Vietnam"></option>
+                        <option value="Yemen"></option>
+                        <option value="Zambia"></option>
+                        <option value="Zimbabwe"></option>
+                    </datalist>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-2">
+                    <label>Message: </label>
+                </div>
+                <div class="col-sm-10">
+                    <textarea asp-for="Order.CustomerRemark" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-10">
+                    <div class="g-recaptcha" data-sitekey="@(Configuration["ReCaptcha:SiteKey"])"></div>
+                </div>
+            </div>
+
+
+            <div class="text-center">
+                <input class="btn btn-primary" type="submit" value="Submit Request" />
+            </div>
+        </form>
+    </div>
+} else {
+    <div class="text-center">
+        <a class="btn btn-primary" asp-controller="Page" asp-action="Index" asp-route-Id="3">Go To Add Some Products</a>
+    </div>
+}
+
+@section Scripts {
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script>
+        $(document).ready(function () {
+            $(window).scrollTop($('#anchor').offset().top - 200);
+        });
+    </script>
+}

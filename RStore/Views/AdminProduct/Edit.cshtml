@@ -1,0 +1,109 @@
+﻿@model ProductEditViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h4>Edit Product </h4>
+@if (TempData["message"] != null) {
+    <div class="alert alert-success">@TempData["message"]</div>
+}
+@if (TempData["error"] != null) {
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Product.ProductID" />
+    <div class="form-group">
+        <label asp-for="Product.ItemCode"></label> <span class="asterisk">*</span>
+        <div><span asp-validation-for="Product.ItemCode" class="text-danger"></span></div>
+        <input asp-for="Product.ItemCode" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Barcode"></label>
+        <input asp-for="Product.Barcode" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Name"></label> <span class="asterisk">*</span>
+        <div><span asp-validation-for="Product.Name" class="text-danger"></span></div>
+        <input asp-for="Product.Name" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Description"></label>
+        <textarea asp-for="Product.Description" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Category"></label>
+        <select asp-for="Product.CategoryID" class="form-control"
+                asp-items="@(new SelectList(Model.Categories,"CategoryID","CategoryName", Model.Product.Category == null ? 0 : Model.Product.CategoryID))">
+            <option value="">Please select one</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Currency"></label> <span class="asterisk">*</span>
+        <div><span asp-validation-for="Product.Currency" class="text-danger" required></span></div>
+        <input asp-for="Product.Currency" class="form-control" placeholder="etc. MYR" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Price"></label> <span class="asterisk">*</span>
+        <div><span asp-validation-for="Product.Price" class="text-danger"></span></div>
+        <input asp-for="Product.Price" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.UOM"></label>
+        <div><span asp-validation-for="Product.UOM" class="text-danger"></span></div>
+        <input asp-for="Product.UOM" class="form-control" placeholder="etc. Per Carton (60 pkts)" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Product.Disable"></label>
+        <input asp-for="Product.Disable" type="checkbox" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.ThumbImage"></label>
+        <input type="hidden" asp-for="Product.ThumbImage" />
+        <br />
+        <input type="file" name="thumbimage" />
+        <br />
+        @if (string.IsNullOrEmpty(Model.Product.ThumbImage)) {
+            <div class="form-control-static">No Thunmbnail Image</div>
+        } else {
+            <a href="@Url.Content("~/images/products/" + @Model.Product.ThumbImage)" target="_blank">
+                <img class="img-thumbnail" width="150" height="150" src="@Url.Content("~/images/products/" + @Model.Product.ThumbImage)" />
+            </a>
+        }
+    </div>
+    <div class="form-group">
+        <label>Product Photos (can select multiple files)</label>
+        @if (Model.Product.Images != null && Model.Product.Images.Any()) {
+            @:&nbsp;&nbsp;
+            <a asp-action="RemoveAllImages" asp-route-productId="@Model.Product.ProductID" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')"> Remove All</a>
+        }
+        <br />
+        <input type="file" name="files" multiple />
+        <br />
+        @if (Model.Product.Images != null && Model.Product.Images.Any()) {
+            foreach (var img in Model.Product.Images) {
+                <a href="@Url.Content("~/images/products/" + img.ImageName)" target="_blank">
+                    <img class="img-thumbnail" width="150" height="150" src="@Url.Content("~/images/products/" + img.ImageName)" />
+                </a>
+            }
+        } else {
+            <div class="form-control-static">No Product Photo</div>
+        }
+
+    </div>
+
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="//cdn.ckeditor.com/4.10.1/full/ckeditor.js"></script>
+    <script>
+    CKEDITOR.config.startupMode = 'source';
+    CKEDITOR.replace('Product.Description');
+    </script>
+}
+

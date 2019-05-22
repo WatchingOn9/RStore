@@ -1,0 +1,39 @@
+﻿@model  IEnumerable<SlideShow>
+
+@{ 
+    var runno = 0;
+}
+
+@if (Model.Any()) {
+    <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            @foreach (var item in Model) {
+                <li data-target="#carouselExampleCaptions" data-slide-to="@runno" class="@(runno == 0 ? "active" : "")"></li>
+                runno++;
+            }
+        </ol>
+        <div class="carousel-inner">
+            @{ 
+                runno = 0;
+            }
+            @foreach (var item in Model) {
+                <div class="carousel-item @(runno == 0 ? "active" : "")">
+                    <img class="d-block w-100 img-fit" alt="@item.Name" src="~/images/slideshows/@item.Image" data-holder-rendered="true" style="max-height: 400px">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>@item.Name</h5>
+                        <p>@item.Description</p>
+                    </div>
+                </div>
+                runno++;
+            }
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+}

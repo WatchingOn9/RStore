@@ -1,0 +1,48 @@
+﻿@model SlideShow
+@{
+    Layout = "_AdminLayout";
+}
+
+<h4>Edit Slide Show</h4>
+@if (TempData["error"] != null) {
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="SlideShowID" />
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <div><span asp-validation-for="Name" class="text-danger"></span></div>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <div><span asp-validation-for="Description" class="text-danger"></span></div>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="Disable"></label>
+            <input asp-for="Disable" type="checkbox" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Order"></label>
+            <div><span asp-validation-for="Order" class="text-danger"></span></div>
+            <input asp-for="Order" class="form-control" type="number" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Image"></label>
+            <input type="hidden" asp-for="Image" />
+            <br />
+            <input type="file" name="file" />
+            <br />
+            @if (string.IsNullOrEmpty(Model.Image)) {
+                <div class="form-control-static">No Thunmbnail Image</div>
+            } else {
+                <img class="img-thumbnail" width="150" height="150" src="@Url.Content("~/images/slideshows/" + @Model.Image)" />
+            }
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>

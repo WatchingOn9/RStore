@@ -1,0 +1,37 @@
+﻿@model LoginModel
+@{
+    Layout = "_LoginLayout";
+}
+
+<form asp-action="Login" asp-controller="Account" method="post" class="form-signin">
+    <div class="mb-4">
+        <div class="text-center">
+            <img class="mb-4 img-thumbnail" src="~/images/rslogo.jpg" alt="" width="250">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <h1 class="h3 mb-3 font-weight-normal">The Secret Base</h1>
+        </div>
+
+        <div class="form-label-group">
+            <input asp-for="Name" type="text" id="inputName" class="form-control" placeholder="Username" required autofocus>
+            <label for="inputName">Username</label>
+        </div>
+        <div class="form-label-group">
+            <input asp-for="Password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+            <label for="inputPassword">Password</label>
+        </div>
+
+        <div class="text-center">
+            <div class="checkbox mb-3">
+                <label>
+                    <input asp-for="RememberMe" type="checkbox" /> Remember me
+                </label>
+            </div>
+
+            <div class="text-danger" asp-validation-summary="All"></div>
+
+            <button class="btn btn-primary btn-block mb-5" type="submit">Log In</button>
+
+            <small class="mb-3 text-muted">RS Global Resource Trading &copy; 2018-2019</small>
+        </div>
+    </div>
+</form>

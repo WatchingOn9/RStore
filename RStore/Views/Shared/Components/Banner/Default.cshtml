@@ -1,0 +1,53 @@
+﻿@using System.Text.RegularExpressions
+@model Setting
+
+@{
+    var phoneNo = Regex.Match(Model.PhoneNo.Replace("-", "").Replace(" ", ""), @"\d+").Value;
+    var whatsapp_link = string.IsNullOrEmpty(Model.PhoneNo) ? "#" : "https://api.whatsapp.com/send?phone=" + phoneNo
++ "&text=Hi%20I've%20visited%20your%20website%20and%20interest%20on%20your%20products.";
+    var logo = string.IsNullOrEmpty(Model.Logo) ? "logo.png" : Model.Logo;
+}
+
+<div class="col-sm-6">
+    <a href="~/">
+        <img class="img-responsive logo" src="~/images/@logo" alt="RS Global Resource Trading">
+    </a>
+</div>
+<div class="col-sm-6" style="margin: auto;">
+    <table border="0" cellpadding="0" cellspacing="0" style="float:right">
+        <tbody>
+            <tr>
+                <td><a href="@whatsapp_link" title="WhatsApp us now" target="_blank"><i class="fab fa-whatsapp faa-tada animated"></i></a></td>
+                <td>
+                    <span style="font-size: 13px;">WhatsApp</span><br />
+                    <a href="@whatsapp_link" title="WhatsApp us now" target="_blank">@Model.PhoneNo</a>
+                </td>
+                <td><a href="mailto:@Model.Email" title="Contact us at @Model.Email" class="contacttext"><i class="far fa-envelope"></i></a></td>
+                <td>
+                    <span style="font-size: 13px;">Send Enquiry</span><br>
+                    <a href="mailto:@Model.Email" title="Contact us at @Model.Email" class="contacttext">@Model.Email</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<a href="@whatsapp_link" class="float" target="_blank">
+    <i class="fab fa-whatsapp my-float"></i>
+</a>
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1';
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- Your customer chat code -->
+<div class="fb-customerchat"
+     attribution=setup_tool
+     page_id="@Model.FacebookPageID">
+</div>
